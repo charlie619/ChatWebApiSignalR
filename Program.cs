@@ -1,5 +1,7 @@
+using ChatWebApiSignalR.DataAccess;
 using ChatWebApiSignalR.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,10 @@ builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Configure SQLite
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=ChatMessages.db"));
 
 // Http request and Response there is 
 // XMLHTTPREquest is secondary call
