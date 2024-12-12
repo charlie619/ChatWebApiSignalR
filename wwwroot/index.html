@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Demo</title>
+</head>
+<body>
+    <h2>Chat with SignalR</h2>
+    <input type="text" id="userInput" placeholder="Your name" />
+    <input type="text" id="messageInput" placeholder="Your message" />
+    <button id="sendButton">Send</button>
+    <ul id="messagesList"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.0/signalr.min.js"></script>
+    <script type="text/javascript">
+        // Create connection to the SignalR Hub
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+        // When a message is received from the server, append it to the message list.
+        connection.on("ReceiveMessage", (user, message) => {
+            const li = document.createElement("li");
+            li.textContent = `${user}: ${message}`;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        // Start the SignalR connection.
+        connection.start().catch(err => console.error(err.toString()));
+
+        // Send message when button is clicked.
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            const user = document.getElementById("userInput").value;
+            const message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+            event.preventDefault();
+        });
+    </script>
+</body>
+</html>
+ <!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Real-Time Typing Demo</title>
+</head>
+<body>
+    <h2>Real-Time Typing with SignalR</h2>
+
+     Text box where user will type 
+    <input type="text" id="messageInput" placeholder="Type something..." />
+
+    <h3>Live Update from Other Client</h3>
+     Text box to show the live update from another client 
+    <input type="text" id="otherClientMessageInput" placeholder="Other client will type here..." disabled />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.0/signalr.min.js"></script>
+    <script type="text/javascript">
+        // Create a connection to the SignalR hub
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+        // When a message is received from the server (when another client types), update the other client's text box
+        connection.on("ReceiveTypingMessage", (message) => {
+            document.getElementById("otherClientMessageInput").value = message;
+        });
+
+        // Start the connection
+        connection.start().catch(err => console.error(err.toString()));
+
+        // Detect input in the message box and send the text to the SignalR hub
+        document.getElementById("messageInput").addEventListener("input", function () {
+            const message = document.getElementById("messageInput").value;
+
+            // Call the 'SendTypingMessage' method in the SignalR hub to broadcast the input
+            connection.invoke("SendTypingMessage", message).catch(err => console.error(err.toString()));
+        });
+    </script>
+</body>
+</html>-->      
